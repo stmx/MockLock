@@ -5,10 +5,14 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.stmx.mocklock.data.Point
+import com.stmx.mocklock.data.Polyline
 
 class MainActivity : AppCompatActivity() {
 
-    private val map: MapContainer by lazy(LazyThreadSafetyMode.NONE) { OsmMapContainer(findViewById(R.id.map_view)) }
+    private val map: MapContainer by lazy(LazyThreadSafetyMode.NONE) {
+        OsmMapContainer(findViewById(R.id.map_view))
+    }
+    private val polyline: MutableList<Point> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,6 +20,12 @@ class MainActivity : AppCompatActivity() {
 
         map.setZoom(15.0)
         map.setCenter(Point(57.6877433463916, 39.76345896720887))
+        map.setOnLongClickListener {
+            polyline.add(it)
+            if (polyline.isNotEmpty()) {
+                map.showPolyline(polyline.toTypedArray())
+            }
+        }
 
         Foo.observePoint {
             showPosition(it)

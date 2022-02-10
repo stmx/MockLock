@@ -1,9 +1,9 @@
 package com.stmx.mocklock.data
 
-class Polyline(private val points: Array<Point>) {
+class Polyline(val points: Array<Point>) {
 
     private val lengthDistribution: List<Double> = calculateLengthDistribution()
-    val totalLength: Double = lengthDistribution.last()
+    val totalLength: Double = lengthDistribution.lastOrNull() ?: 0.0
     private val normalizeLengthDistribution: List<Double> = lengthDistribution.map { it / totalLength }
     private val parametricEquationDistribution: List<ParametricEquation> =
         calculateParametricEquationDistribution()
