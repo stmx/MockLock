@@ -9,30 +9,44 @@ import com.stmx.mocklock.data.Polyline
 import com.stmx.mocklock.data.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MockLocationService : Service() {
+
+    private var job: Job? = null
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val points = parseIntent(intent)
         if (points.isNotEmpty()) {
-            val polyline = Polyline(route)
-            val track = Track(polyline, 120.0)
-            CoroutineScope(Dispatchers.Default).launch {
-                track.start().collect {
-                    Foo.setPoint(it.point)
-                    if (it.value >= 1.0) stopService()
-                }
-            }
+            startTrack(points)
         } else {
             stopService()
         }
         return START_STICKY
     }
 
+    private fun startTrack(points: Array<Point>) {
+        val polyline = Polyline(points)
+        val track = Track(polyline, 120.0)
+        job = CoroutineScope(Dispatchers.Default).launch {
+            track.start().collect {
+                Foo.setPoint(it.point)
+                if (it.value >= 1.0) stopService()
+            }
+        }
+    }
+
     private fun stopService() {
         stopSelf()
+    }
+
+    override fun onDestroy() {
+        job?.cancel()
+        job = null
+        super.onDestroy()
     }
 
     companion object {
