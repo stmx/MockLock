@@ -1,14 +1,14 @@
-package com.stmx.mocklock.data
+package com.stmx.mocklock.data.entity
 
-data class ParametricEquation(
+class ParametricEquation(
     private val kx: Double,
     private val ky: Double,
     private val bx: Double,
     private val by: Double,
 ) {
-    fun calculate(t: Double): Point {
+    fun calculate(t: Double): GeoPoint {
         val x = kx * t + bx
         val y = ky * t + by
-        return Point(x, y)
+        return GeoPoint(x, y)
     }
 }

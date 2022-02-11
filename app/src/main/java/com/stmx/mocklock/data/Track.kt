@@ -1,9 +1,9 @@
 package com.stmx.mocklock.data
 
+import com.stmx.mocklock.data.entity.GeoPoint
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 
 class Track(
@@ -22,16 +22,21 @@ class Track(
         var time = 0L
         while (time <= totalTime) {
             time = System.currentTimeMillis() - startTime
-            val part = (time.toDouble() / totalTime.toDouble())
-            val position = when {
-                part > MAX_TIME_RATIO -> MAX_TIME_RATIO
-                part < MIN_TIME_RATIO -> MIN_TIME_RATIO
-                else -> part
-            }
+            val position = calculatePosition(time)
             val point = polyline.getPointAtPosition(position)
             emit(Position(position, point))
             delay(Random.nextLong(minUpdateInterval, maxUpdateInterval))
         }
+    }
+
+    private fun calculatePosition(currentTime: Long): Double {
+        val part = (currentTime.toDouble() / totalTime.toDouble())
+        val position = when {
+            part > MAX_TIME_RATIO -> MAX_TIME_RATIO
+            part < MIN_TIME_RATIO -> MIN_TIME_RATIO
+            else -> part
+        }
+        return position
     }
 
     companion object {
@@ -43,5 +48,5 @@ class Track(
         private const val KM_H_TO_M_S = 0.27777777
     }
 
-    class Position(val value: Double, val point: Point)
+    class Position(val value: Double, val point: GeoPoint)
 }

@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import com.stmx.mocklock.data.Point
+import com.stmx.mocklock.data.entity.GeoPoint
 import com.stmx.mocklock.data.Polyline
 import com.stmx.mocklock.data.Track
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +28,7 @@ class MockLocationService : Service() {
         return START_STICKY
     }
 
-    private fun startTrack(points: Array<Point>) {
+    private fun startTrack(points: Array<GeoPoint>) {
         val polyline = Polyline(points)
         val track = Track(polyline, 120.0)
         job = CoroutineScope(Dispatchers.Default).launch {
@@ -53,16 +53,16 @@ class MockLocationService : Service() {
 
         private const val EXTRA_POINT_ARRAY_KEY = "arrayPointsKey"
 
-        fun newIntent(context: Context, array: Array<Point>): Intent {
+        fun newIntent(context: Context, array: Array<GeoPoint>): Intent {
             return Intent(context, MockLocationService::class.java).apply {
                 putExtra(EXTRA_POINT_ARRAY_KEY, array)
             }
         }
 
-        private fun parseIntent(intent: Intent): Array<Point> {
+        private fun parseIntent(intent: Intent): Array<GeoPoint> {
             val array = intent.getParcelableArrayExtra(EXTRA_POINT_ARRAY_KEY) ?: return emptyArray()
             return array.mapNotNull {
-                it as? Point
+                it as? GeoPoint
             }.toTypedArray()
         }
     }

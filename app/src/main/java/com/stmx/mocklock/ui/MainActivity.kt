@@ -1,25 +1,35 @@
-package com.stmx.mocklock
+package com.stmx.mocklock.ui
 
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.stmx.mocklock.data.Point
-import com.stmx.mocklock.data.Polyline
+import com.stmx.mocklock.Foo
+import com.stmx.mocklock.MockLocationService
+import com.stmx.mocklock.R
+import com.stmx.mocklock.route
+import com.stmx.mocklock.ui.map.MapWrapper
+import com.stmx.mocklock.ui.map.impl.OsmGeoPointMapper
+import com.stmx.mocklock.ui.map.impl.OsmMapWrapper
+import com.stmx.mocklock.ui.models.GeoPointUI
+import org.osmdroid.views.MapView
 
 class MainActivity : AppCompatActivity() {
 
-    private val map: MapContainer by lazy(LazyThreadSafetyMode.NONE) {
-        OsmMapContainer(findViewById(R.id.map_view))
+    private val map: MapWrapper by lazy {
+        val osmMapper = OsmGeoPointMapper()
+        val mapView = findViewById<MapView>(R.id.map_view)
+        OsmMapWrapper(mapView, osmMapper)
     }
-    private val polyline: MutableList<Point> = mutableListOf()
+
+    private val polyline: MutableList<GeoPointUI> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         map.setZoom(15.0)
-        map.setCenter(Point(57.6877433463916, 39.76345896720887))
+        map.setCenter(GeoPointUI(57.6877433463916, 39.76345896720887))
         map.setOnLongClickListener {
             polyline.add(it)
             if (polyline.isNotEmpty()) {
@@ -35,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showPosition(point: Point) {
+    private fun showPosition(point: GeoPointUI) {
         Log.d("FooTag", "Point: $point")
         map.setCurrentPosition(point)
     }
