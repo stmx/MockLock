@@ -38,7 +38,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         Foo.observePoint {
-            showPosition(it)
+            val point = GeoPointUI(it.latitude, it.longitude)
+            showPosition(point)
         }
         findViewById<Button>(R.id.start_service).setOnClickListener {
             startService(MockLocationService.newIntent(this, route))
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showPosition(point: GeoPointUI) {
         Log.d("FooTag", "Point: $point")
+        map.showCurrentPosition()
         map.setCurrentPosition(point)
     }
 

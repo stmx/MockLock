@@ -1,17 +1,21 @@
-package com.stmx.mocklock.data
+package com.stmx.mocklock.domain
 
-import com.stmx.mocklock.data.entity.GeoPoint
-import kotlinx.coroutines.delay
+import com.stmx.mocklock.domain.entity.GeoPoint
+import com.stmx.mocklock.domain.entity.calculator.PositionCalculator
+import com.stmx.mocklock.domain.entity.calculator.TimeCalculator
 import kotlin.random.Random
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class Track(
-    private val polyline: Polyline,
+    private val points: List<GeoPoint>,
+    private val positionCalculator: PositionCalculator,
+    timeCalculator: TimeCalculator,
+
     speed: Double,
 ) {
-    private val totalTime: Long =
-        (MILLIS_IN_SEC * polyline.totalLength / speed / KM_H_TO_M_S).toLong()
+    private val totalTime: Long = timeCalculator.calculate(points, speed).toLong()
     private var startTime: Long = 0L
 
     fun start(
@@ -23,7 +27,7 @@ class Track(
         while (time <= totalTime) {
             time = System.currentTimeMillis() - startTime
             val position = calculatePosition(time)
-            val point = polyline.getPointAtPosition(position)
+            val point = positionCalculator.calculate(points, position)
             emit(Position(position, point))
             delay(Random.nextLong(minUpdateInterval, maxUpdateInterval))
         }

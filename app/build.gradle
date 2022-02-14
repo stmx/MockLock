@@ -35,8 +35,7 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    def lifecycle_version = "2.5.0-alpha01"
-    def arch_version = "2.1.0"
+    def lifecycle_version = "2.5.0-alpha02"
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
