@@ -8,11 +8,51 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class Track(
+
+interface Track {
+    fun setMaxUpdateInterval(maxUpdateInterval: Long): Track
+    fun setMinUpdateInterval(minUpdateInterval: Long): Track
+    fun setConfiguration(configuration: Configuration)
+
+    class Polyline(
+        private val positionCalculator: PositionCalculator,
+        private val timeCalculator: TimeCalculator,
+    ) : Track {
+        private var _configuration: Configuration? = null
+        private val configuration = checkNotNull(_configuration)
+        private val points = configuration.points
+        private val speed = configuration.speed
+        private var minUpdateInterval: Long = DEFAULT_MIN_UPDATE_INTERVAL
+        private var maxUpdateInterval: Long = DEFAULT_MAX_UPDATE_INTERVAL
+        private var totalTime: Double = timeCalculator.calculate(points, speed)
+
+        override fun setMaxUpdateInterval(maxUpdateInterval: Long): Track {
+            this.maxUpdateInterval = maxUpdateInterval
+            return this
+        }
+
+        override fun setMinUpdateInterval(minUpdateInterval: Long): Track {
+            this.minUpdateInterval = minUpdateInterval
+            return this
+        }
+
+        override fun setConfiguration(configuration: Configuration) {
+            this._configuration = configuration
+        }
+
+        companion object {
+            private const val DEFAULT_MIN_UPDATE_INTERVAL: Long = 800L
+            private const val DEFAULT_MAX_UPDATE_INTERVAL: Long = 1500L
+        }
+    }
+
+    class Configuration(val points: List<GeoPoint>, val speed: Double)
+}
+
+class TrackImpl(
     private val points: List<GeoPoint>,
     private val positionCalculator: PositionCalculator,
     timeCalculator: TimeCalculator,
-
     speed: Double,
 ) {
     private val totalTime: Long = timeCalculator.calculate(points, speed).toLong()

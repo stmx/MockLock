@@ -31,11 +31,4 @@ interface DistanceEquation {
         }
     }
 
-    class Linear : DistanceEquation {
-        override fun calculate(startPoint: GeoPoint, endPoint: GeoPoint): Double {
-            val dLon = endPoint.longitude - startPoint.longitude
-            val dLat = endPoint.latitude - startPoint.latitude
-            return sqrt(dLon * dLon + dLat * dLat)
-        }
-    }
 }

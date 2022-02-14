@@ -4,14 +4,8 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import com.stmx.mocklock.domain.Polyline
-import com.stmx.mocklock.domain.Track
-import com.stmx.mocklock.domain.entity.GeoPoint
 import com.stmx.mocklock.ui.models.GeoPointUI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class MockLocationService : Service() {
 
@@ -30,15 +24,15 @@ class MockLocationService : Service() {
     }
 
     private fun startTrack(points: Array<GeoPointUI>) {
-        val points = points.map { GeoPoint(it.latitude, it.longitude) }.toTypedArray()
-        val polyline = Polyline(points)
-        val track = Track(polyline, 120.0)
-        job = CoroutineScope(Dispatchers.Default).launch {
-            track.start().collect {
-                Foo.setPoint(it.point)
-                if (it.value >= 1.0) stopService()
-            }
-        }
+//        val points = points.map { GeoPoint(it.latitude, it.longitude) }.toTypedArray()
+//        val polyline = Polyline(points)
+//        val track = TrackImpl(polyline, 120.0)
+//        job = CoroutineScope(Dispatchers.Default).launch {
+//            track.start().collect {
+//                Foo.setPoint(it.point)
+//                if (it.value >= 1.0) stopService()
+//            }
+//        }
     }
 
     private fun stopService() {
