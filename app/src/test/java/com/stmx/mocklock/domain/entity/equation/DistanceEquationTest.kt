@@ -1,19 +1,20 @@
 package com.stmx.mocklock.domain.entity.equation
 
-import com.stmx.mocklock.domain.entity.DELTA_DISTANCE
-import com.stmx.mocklock.domain.entity.geoPoint
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import com.stmx.mocklock.domain.DELTA_DISTANCE
+import com.stmx.mocklock.domain.testmodels.geoPoint
+import com.stmx.mocklock.domain.testmodels.haversineDistanceEquation
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class DistanceEquationTest {
 
-    private val equation = DistanceEquation.Haversine()
+    private val equation = haversineDistanceEquation()
 
     @Test
     fun `calculating Haversine formula length`() {
         val startPoint = geoPoint(latitude = 51.5007, longitude = 0.1246)
         val endPoint = geoPoint(latitude = 40.6892, longitude = 74.0445)
-        assertEquals(equation.calculate(startPoint, endPoint), 5574840.45, DELTA_DISTANCE)
+        assertEquals(5574840.45, equation.calculate(startPoint, endPoint), DELTA_DISTANCE)
     }
 
     @Test

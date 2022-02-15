@@ -1,16 +1,14 @@
 package com.stmx.mocklock.domain.entity.calculator
 
-import com.stmx.mocklock.domain.entity.equation.DistanceEquation
 import com.stmx.mocklock.domain.entity.GeoPoint
+import com.stmx.mocklock.domain.entity.equation.DistanceEquation
 
 interface DistanceCalculator {
-
-    val distanceEquation: DistanceEquation
 
     fun calculateTotal(points: List<GeoPoint>): Double
     fun calculate(points: List<GeoPoint>): List<Double>
 
-    class Polyline(override val distanceEquation: DistanceEquation) : DistanceCalculator {
+    class Polyline(private val distanceEquation: DistanceEquation) : DistanceCalculator {
 
         override fun calculateTotal(points: List<GeoPoint>): Double {
             return points.foldIndexed(LENGTH_OFFSET) { index, acc, geoPoint ->
@@ -24,12 +22,10 @@ interface DistanceCalculator {
         }
 
         override fun calculate(points: List<GeoPoint>): List<Double> {
-            val list = mutableListOf<Double>()
-            if (points.size < 2) return list
-            for (index in 0..points.size - 2) {
-                list.add(distanceEquation.calculate(points[index], points[index + 1]))
+            return points.mapIndexed { index, geoPoint ->
+                val prevIndex = if (index == 0) index else index - 1
+                distanceEquation.calculate(points[prevIndex], geoPoint)
             }
-            return list
         }
 
         companion object {
