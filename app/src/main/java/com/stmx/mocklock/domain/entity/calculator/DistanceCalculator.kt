@@ -2,13 +2,16 @@ package com.stmx.mocklock.domain.entity.calculator
 
 import com.stmx.mocklock.domain.entity.GeoPoint
 import com.stmx.mocklock.domain.entity.equation.DistanceEquation
+import javax.inject.Inject
 
 interface DistanceCalculator {
 
     fun calculateTotal(points: List<GeoPoint>): Double
     fun calculate(points: List<GeoPoint>): List<Double>
 
-    class Polyline(private val distanceEquation: DistanceEquation) : DistanceCalculator {
+    class Polyline @Inject constructor(
+        private val distanceEquation: DistanceEquation
+    ) : DistanceCalculator {
 
         override fun calculateTotal(points: List<GeoPoint>): Double {
             return points.foldIndexed(LENGTH_OFFSET) { index, acc, geoPoint ->

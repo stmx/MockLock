@@ -2,6 +2,8 @@ package com.stmx.mocklock.domain
 
 import com.stmx.mocklock.domain.entity.TrackConfiguration
 import com.stmx.mocklock.domain.entity.calculator.TimeCalculator
+import javax.inject.Inject
+import javax.inject.Named
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -10,9 +12,9 @@ interface TimeProgressEmitter {
 
     fun start(configuration: TrackConfiguration): Flow<Double>
 
-    class LinearTimeProgressEmitter(
+    class Linear @Inject constructor(
         private val timeCalculator: TimeCalculator,
-        private val minimalPeriod: Long = DEFAULT_MIN_PERIOD
+        @Named("DEFAULT_MIN_PERIOD") private val minimalPeriod: Long
     ) : TimeProgressEmitter {
         override fun start(configuration: TrackConfiguration): Flow<Double> = flow {
             val totalTime = timeCalculator.calculate(configuration.points, configuration.speed)
@@ -35,7 +37,7 @@ interface TimeProgressEmitter {
         }
 
         companion object {
-            private const val DEFAULT_MIN_PERIOD: Long = 1000L
+            const val DEFAULT_MIN_PERIOD: Long = 1000L
         }
     }
 }

@@ -3,12 +3,13 @@ package com.stmx.mocklock.domain.entity.calculator
 import com.stmx.mocklock.domain.entity.GeoPoint
 import com.stmx.mocklock.domain.entity.equation.PositionEquation
 import com.stmx.mocklock.domain.integrate
+import javax.inject.Inject
 
 interface PositionCalculator {
 
     fun calculate(points: List<GeoPoint>, progress: Double): GeoPoint
 
-    class Polyline(
+    class Polyline @Inject constructor(
         private val distanceCalculator: DistanceCalculator,
         private val positionEquationCalculator: PositionEquationCalculator,
     ) : PositionCalculator {

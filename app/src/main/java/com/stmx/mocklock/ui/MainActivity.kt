@@ -3,18 +3,27 @@ package com.stmx.mocklock.ui
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.stmx.mocklock.Foo
 import com.stmx.mocklock.MockLocationService
 import com.stmx.mocklock.R
+import com.stmx.mocklock.di.DaggerAppComponent
+import com.stmx.mocklock.domain.TrackPositionEmitter
 import com.stmx.mocklock.route
 import com.stmx.mocklock.ui.map.MapWrapper
 import com.stmx.mocklock.ui.map.impl.OsmGeoPointMapper
 import com.stmx.mocklock.ui.map.impl.OsmMapWrapper
 import com.stmx.mocklock.ui.models.GeoPointUI
+import javax.inject.Inject
 import org.osmdroid.views.MapView
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var trackPositionEmitter: TrackPositionEmitter
 
     private val map: MapWrapper by lazy {
         val osmMapper = OsmGeoPointMapper()
@@ -27,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        DaggerAppComponent.builder().build().inject(this)
 
         map.setZoom(15.0)
         map.setCenter(GeoPointUI(57.6877433463916, 39.76345896720887))

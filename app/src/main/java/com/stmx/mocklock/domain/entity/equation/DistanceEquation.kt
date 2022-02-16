@@ -1,6 +1,7 @@
 package com.stmx.mocklock.domain.entity.equation
 
 import com.stmx.mocklock.domain.entity.GeoPoint
+import javax.inject.Inject
 import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.pow
@@ -11,7 +12,7 @@ interface DistanceEquation {
 
     fun calculate(startPoint: GeoPoint, endPoint: GeoPoint): Double
 
-    class Haversine : DistanceEquation {
+    class Haversine @Inject constructor(): DistanceEquation {
 
         override fun calculate(startPoint: GeoPoint, endPoint: GeoPoint): Double {
             val lat1 = Math.toRadians(startPoint.latitude)

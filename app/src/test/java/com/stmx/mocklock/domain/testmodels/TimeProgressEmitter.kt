@@ -8,4 +8,4 @@ private const val DEFAULT_PERIOD = 1000L
 fun linearTimeProgressEmitter(
     timeCalculator: TimeCalculator = polylineTimeCalculator(),
     period: Long = DEFAULT_PERIOD
-): TimeProgressEmitter = TimeProgressEmitter.LinearTimeProgressEmitter(timeCalculator, period)
+): TimeProgressEmitter = TimeProgressEmitter.Linear(timeCalculator, period)
