@@ -2,7 +2,7 @@ package com.stmx.mocklock.domain.entity.calculator
 
 import com.stmx.mocklock.domain.entity.GeoPoint
 import com.stmx.mocklock.domain.entity.equation.PositionEquation
-import com.stmx.mocklock.domain.integrate
+import com.stmx.mocklock.domain.utils.integrate
 import javax.inject.Inject
 
 interface PositionCalculator {
@@ -44,6 +44,5 @@ interface PositionCalculator {
                 .integrate()
                 .map { distance -> distance / totalDistance }
         }
-
     }
 }

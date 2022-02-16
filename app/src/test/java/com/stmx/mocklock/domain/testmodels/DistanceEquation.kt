@@ -14,10 +14,3 @@ fun linearDistanceEquation(): DistanceEquation = object : DistanceEquation {
     }
 }
 
-fun distanceEquationStub(
-    distance: Double = DEFAULT_DISTANCE_STUB
-): DistanceEquation = object : DistanceEquation {
-    override fun calculate(startPoint: GeoPoint, endPoint: GeoPoint): Double = distance
-}
-
-private const val DEFAULT_DISTANCE_STUB = 5.0

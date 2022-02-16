@@ -20,9 +20,9 @@ interface PositionEquationCalculator {
         }
 
         override fun calculate(points: List<GeoPoint>): List<PositionEquation> {
-            return points.mapIndexed { index, geoPoint ->
+            return points.mapIndexed { index, point ->
                 val prevIndex = if (index == 0) index else index - 1
-                calculate(points[prevIndex], geoPoint)
+                calculate(points[prevIndex], point)
             }
         }
     }

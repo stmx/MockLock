@@ -57,7 +57,8 @@ class TimeProgressEmitterTest {
 
 
     private suspend fun assertValueEquals(time: Long, period: Long) = withContext(Dispatchers.IO) {
-        val progressEmitter = linearTimeProgressEmitter(timeCalculatorStub(time), period = period)
+        val progressEmitter = linearTimeProgressEmitter(timeCalculatorStub(time))
+        progressEmitter.setMinimalPeriodUpdate(period)
         val results = progressEmitter.start(trackConfiguration()).toList()
         val size = ceil(time.toDouble() / period).toInt()
         for (index in 0..size) {
@@ -71,7 +72,8 @@ class TimeProgressEmitterTest {
     }
 
     private suspend fun assertPeriodEquals(time: Long, period: Long) = withContext(Dispatchers.IO) {
-        val progressEmitter = linearTimeProgressEmitter(timeCalculatorStub(time), period = period)
+        val progressEmitter = linearTimeProgressEmitter(timeCalculatorStub(time))
+        progressEmitter.setMinimalPeriodUpdate(period)
         var prevTime = System.currentTimeMillis()
         val expectedPeriod = period.coerceAtMost(time).toDouble()
         progressEmitter.start(trackConfiguration()).collect { progress ->

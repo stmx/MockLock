@@ -14,9 +14,9 @@ interface DistanceCalculator {
     ) : DistanceCalculator {
 
         override fun calculateTotal(points: List<GeoPoint>): Double {
-            return points.foldIndexed(LENGTH_OFFSET) { index, acc, geoPoint ->
+            return points.foldIndexed(LENGTH_OFFSET) { index, acc, point ->
                 val distance = if (index != 0) {
-                    distanceEquation.calculate(points[index - 1], geoPoint)
+                    distanceEquation.calculate(points[index - 1], point)
                 } else {
                     0.0
                 }
@@ -25,15 +25,14 @@ interface DistanceCalculator {
         }
 
         override fun calculate(points: List<GeoPoint>): List<Double> {
-            return points.mapIndexed { index, geoPoint ->
+            return points.mapIndexed { index, point ->
                 val prevIndex = if (index == 0) index else index - 1
-                distanceEquation.calculate(points[prevIndex], geoPoint)
+                distanceEquation.calculate(points[prevIndex], point)
             }
         }
 
         companion object {
             private const val LENGTH_OFFSET = 0.0
         }
-
     }
 }

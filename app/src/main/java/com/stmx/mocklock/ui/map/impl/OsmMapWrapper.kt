@@ -23,28 +23,27 @@ class OsmMapWrapper(
     private val polyline: Polyline by lazy(LazyThreadSafetyMode.NONE) { Polyline() }
 
     private val mapEventsReceiver: MapEventsReceiver = object : MapEventsReceiver {
-        override fun singleTapConfirmedHelper(geoPoint: GeoPoint?): Boolean {
+        override fun singleTapConfirmedHelper(point: GeoPoint?): Boolean {
             return true
         }
 
-        override fun longPressHelper(geoPoint: GeoPoint?): Boolean {
-            if (geoPoint != null) {
-                onLongClickListener?.invoke(mapper.mapFrom(geoPoint))
+        override fun longPressHelper(point: GeoPoint?): Boolean {
+            if (point != null) {
+                onLongClickListener?.invoke(mapper.mapFrom(point))
             }
             return true
         }
-
     }
     private val mapEventOverlay: MapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
     private var onLongClickListener: ((GeoPointUI) -> Unit)? = null
 
     init {
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setTileSource(TileSourceFactory.MAPNIK)
         map.overlays.add(mapEventOverlay)
         currentPointMarker.setOnMarkerClickListener { _, _ -> true }
         currentPointMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         polyline.setOnClickListener { _, _, _ -> true }
-        polyline.outlinePaint.strokeWidth = 5f
+        polyline.outlinePaint.strokeWidth = DEFAULT_STROKE_WIDTH
         Configuration.getInstance()
             .load(map.context, PreferenceManager.getDefaultSharedPreferences(map.context))
     }
@@ -76,8 +75,8 @@ class OsmMapWrapper(
         if (!map.overlays.contains(this.polyline)) {
             map.overlays.add(this.polyline)
         }
-        val geoPoints = points.map { mapper.mapTo(it) }
-        this.polyline.setPoints(geoPoints)
+        val points = points.map { mapper.mapTo(it) }
+        this.polyline.setPoints(points)
         map.invalidate()
     }
 
@@ -101,5 +100,9 @@ class OsmMapWrapper(
 
     override fun onPause() {
         map.onPause()
+    }
+
+    companion object {
+        private const val DEFAULT_STROKE_WIDTH: Float = 5f
     }
 }

@@ -12,7 +12,7 @@ interface DistanceEquation {
 
     fun calculate(startPoint: GeoPoint, endPoint: GeoPoint): Double
 
-    class Haversine @Inject constructor(): DistanceEquation {
+    class Haversine @Inject constructor() : DistanceEquation {
 
         override fun calculate(startPoint: GeoPoint, endPoint: GeoPoint): Double {
             val lat1 = Math.toRadians(startPoint.latitude)
@@ -31,5 +31,4 @@ interface DistanceEquation {
             private const val EARTH_RADIUS = 6371000
         }
     }
-
 }

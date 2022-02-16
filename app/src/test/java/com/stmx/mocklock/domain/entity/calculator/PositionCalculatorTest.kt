@@ -55,10 +55,10 @@ class PositionCalculatorTest {
 
     @Test
     fun `calculate nodes position with geopoint list more than 1 elements`() {
-        val geoPoints = geoPointListWithEqualsDistance(from = 2)
-        for (index in geoPoints.indices) {
-            val progress = index.toDouble() / (geoPoints.size - 1)
-            assertPosition(geoPoints, progress, geoPoints[index])
+        val points = geoPointListWithEqualsDistance(from = 2)
+        for (index in points.indices) {
+            val progress = index.toDouble() / (points.size - 1)
+            assertPosition(points, progress, points[index])
         }
     }
 
@@ -79,8 +79,8 @@ class PositionCalculatorTest {
         assertPosition(geoPoints, 0.875, geoPoint(11.0, 5.5))
     }
 
-    private fun assertPosition(geoPoints: List<GeoPoint>, progress: Double, expected: GeoPoint) {
-        val result = positionCalculator.calculate(geoPoints, progress)
+    private fun assertPosition(points: List<GeoPoint>, progress: Double, expected: GeoPoint) {
+        val result = positionCalculator.calculate(points, progress)
         assertEquals(
             expected = expected.latitude,
             actual = result.latitude,

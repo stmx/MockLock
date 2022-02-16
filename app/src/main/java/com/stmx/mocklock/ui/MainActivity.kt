@@ -1,29 +1,29 @@
 package com.stmx.mocklock.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.stmx.mocklock.Foo
-import com.stmx.mocklock.MockLocationService
+import androidx.lifecycle.ViewModelProvider
 import com.stmx.mocklock.R
-import com.stmx.mocklock.di.DaggerAppComponent
-import com.stmx.mocklock.domain.TrackPositionEmitter
-import com.stmx.mocklock.route
+import com.stmx.mocklock.TrackEmitterService
+import com.stmx.mocklock.appComponent
 import com.stmx.mocklock.ui.map.MapWrapper
 import com.stmx.mocklock.ui.map.impl.OsmGeoPointMapper
 import com.stmx.mocklock.ui.map.impl.OsmMapWrapper
 import com.stmx.mocklock.ui.models.GeoPointUI
-import javax.inject.Inject
+import dagger.Lazy
 import org.osmdroid.views.MapView
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
-
     @Inject
-    lateinit var trackPositionEmitter: TrackPositionEmitter
+    lateinit var factory: Lazy<ViewModelProvider.Factory>
+
+    private val viewModel: MainViewModel by viewModels {
+        factory.get()
+    }
 
     private val map: MapWrapper by lazy {
         val osmMapper = OsmGeoPointMapper()
@@ -31,35 +31,64 @@ class MainActivity : AppCompatActivity() {
         OsmMapWrapper(mapView, osmMapper)
     }
 
-    private val polyline: MutableList<GeoPointUI> = mutableListOf()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        DaggerAppComponent.builder().build().inject(this)
+        applicationContext.appComponent.inject(this)
+        viewModel.liveData.observe(this) { state ->
+            renderState(state)
+        }
 
-        map.setZoom(15.0)
-        map.setCenter(GeoPointUI(57.6877433463916, 39.76345896720887))
         map.setOnLongClickListener {
-            polyline.add(it)
-            if (polyline.isNotEmpty()) {
-                map.showPolyline(polyline.toTypedArray())
+            viewModel.addPointToPolyline(it)
+        }
+
+        findViewById<Button>(R.id.start_service).setOnClickListener {
+            viewModel.liveData.value?.polyline?.let { points ->
+                viewModel.startTrack()
+                startService(TrackEmitterService.newIntent(this, points))
             }
         }
 
-        Foo.observePoint {
-            val point = GeoPointUI(it.latitude, it.longitude)
-            showPosition(point)
-        }
-        findViewById<Button>(R.id.start_service).setOnClickListener {
-            startService(MockLocationService.newIntent(this, route))
+        findViewById<Button>(R.id.clear).setOnClickListener {
+            viewModel.clearPolyline()
         }
     }
 
-    private fun showPosition(point: GeoPointUI) {
-        Log.d("FooTag", "Point: $point")
-        map.showCurrentPosition()
-        map.setCurrentPosition(point)
+    private fun renderState(state: MapState) {
+        setZoom(state.zoom, state.needInvalidateZoom)
+        setCenter(state.center, state.needInvalidateCenter)
+        setCurrentMockPoint(state.currentMockPoint)
+        setPolyline(state.polyline)
+    }
+
+    private fun setCurrentMockPoint(point: GeoPointUI?) {
+        if (point != null) {
+            map.showCurrentPosition()
+            map.setCurrentPosition(point)
+        } else {
+            map.hideCurrentPosition()
+        }
+    }
+
+    private fun setPolyline(polyline: List<GeoPointUI>?) {
+        if (polyline != null && polyline.isNotEmpty()) {
+            map.showPolyline(polyline.toTypedArray())
+        } else {
+            map.hidePolyline()
+        }
+    }
+
+    private fun setZoom(zoom: Double, needInvalidate: Boolean) {
+        if (needInvalidate) {
+            map.setZoom(zoom)
+        }
+    }
+
+    private fun setCenter(point: GeoPointUI, needInvalidate: Boolean) {
+        if (needInvalidate) {
+            map.setCenter(point)
+        }
     }
 
     override fun onResume() {
@@ -71,5 +100,4 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         map.onPause()
     }
-
 }
