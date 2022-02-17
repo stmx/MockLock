@@ -1,6 +1,8 @@
 package com.stmx.mocklock.ui.map.impl
 
 import android.preference.PreferenceManager
+import androidx.appcompat.content.res.AppCompatResources
+import com.stmx.mocklock.R
 import com.stmx.mocklock.ui.map.GeoPointMapper
 import com.stmx.mocklock.ui.map.MapWrapper
 import com.stmx.mocklock.ui.models.GeoPointUI
@@ -23,6 +25,7 @@ class OsmMapWrapper(
     private var currentPointIsShown: Boolean = false
     private val currentPointMarker: Marker by lazy(LazyThreadSafetyMode.NONE) { Marker(map) }
     private val polyline: Polyline by lazy(LazyThreadSafetyMode.NONE) { Polyline() }
+    private val polylineMarkers: MutableMap<GeoPointUI, Marker> = HashMap()
 
     private val mapEventsReceiver: MapEventsReceiver = object : MapEventsReceiver {
         override fun singleTapConfirmedHelper(point: GeoPoint?): Boolean {
@@ -80,8 +83,26 @@ class OsmMapWrapper(
         if (!map.overlays.contains(this.polyline)) {
             map.overlays.add(this.polyline)
         }
-        val points = points.map { mapper.mapTo(it) }
-        this.polyline.setPoints(points)
+
+        val osmPoints = points.map { mapper.mapTo(it) }
+        this.polyline.setPoints(osmPoints)
+
+        for (point in points) {
+            if (!polylineMarkers.containsKey(point)) {
+                val marker = Marker(map).apply {
+                    setOnMarkerClickListener { _, _ -> true }
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    position = mapper.mapTo(point)
+                    icon = AppCompatResources.getDrawable(
+                        map.context,
+                        R.drawable.ic_baseline_location_on_24
+                    )
+                }
+                polylineMarkers[point] = marker
+                map.overlays.add(marker)
+            }
+        }
+
         map.invalidate()
     }
 
@@ -89,6 +110,10 @@ class OsmMapWrapper(
         if (map.overlays.contains(this.polyline)) {
             map.overlays.remove(this.polyline)
         }
+        for (point in polylineMarkers.values) {
+            map.overlays.remove(point)
+        }
+        polylineMarkers.clear()
         map.invalidate()
     }
 

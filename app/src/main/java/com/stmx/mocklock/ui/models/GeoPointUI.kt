@@ -3,11 +3,11 @@ package com.stmx.mocklock.ui.models
 import android.os.Parcelable
 import com.stmx.mocklock.domain.entity.GeoPoint
 import com.stmx.mocklock.domain.entity.Mapper
-import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class GeoPointUI(val latitude: Double, val longitude: Double) : Parcelable {
+data class GeoPointUI(val latitude: Double, val longitude: Double) : Parcelable {
 
     private constructor(point: GeoPoint) : this(point.latitude, point.longitude)
 
