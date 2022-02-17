@@ -8,7 +8,10 @@ data class MapState(
     val zoom: Double = DEFAULT_ZOOM,
     val center: GeoPointUI = GeoPointUI(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
     val needInvalidateCenter: Boolean = true,
-    val needInvalidateZoom: Boolean = true
+    val needInvalidateZoom: Boolean = true,
+    val trackCanBeStarted: Boolean = false,
+    val trackCanBeStopped: Boolean = false,
+    val trackCanBeCleared: Boolean = false,
 )
 
 private const val DEFAULT_LATITUDE: Double = 57.6877433463916

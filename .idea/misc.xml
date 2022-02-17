@@ -3,7 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1574074074074074" />
+        <entry key="../../../../layout/custom_preview.xml" value="0.403125" />
+        <entry key="app/src/main/res/drawable/control_button_shape.xml" value="0.347" />
+        <entry key="app/src/main/res/drawable/control_button_shape_disabled.xml" value="0.291" />
+        <entry key="app/src/main/res/drawable/control_button_shape_enabled.xml" value="0.291" />
+        <entry key="app/src/main/res/drawable/ic_outline_delete_24.xml" value="0.202" />
+        <entry key="app/src/main/res/drawable/ic_outline_play_arrow_24.xml" value="0.202" />
+        <entry key="app/src/main/res/drawable/ic_outline_stop_24.xml" value="0.202" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/motion_x.xml" value="0.13854166666666667" />
       </map>
     </option>
   </component>

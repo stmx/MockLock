@@ -10,9 +10,9 @@ import com.stmx.mocklock.domain.entity.Mapper
 import com.stmx.mocklock.domain.repository.MockTrackRepository
 import com.stmx.mocklock.domain.utils.mapNullable
 import com.stmx.mocklock.ui.models.GeoPointUI
+import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class MainViewModel(
     private val repository: MockTrackRepository,
@@ -30,10 +30,13 @@ class MainViewModel(
                 .map { if (it.isNullOrEmpty()) null else it }
                 .map { points -> points?.map(uiMapper::map) }
                 .collect { points ->
+                    val isEditable = points?.isNotEmpty() ?: false
                     _liveData.value = liveData.value?.copy(
                         polyline = points,
                         needInvalidateCenter = false,
-                        needInvalidateZoom = false
+                        needInvalidateZoom = false,
+                        trackCanBeCleared = isEditable,
+                        trackCanBeStarted = isEditable,
                     )
                 }
         }
@@ -44,10 +47,14 @@ class MainViewModel(
             repository.observeMockLocation()
                 .map { point -> uiMapper.mapNullable(point) }
                 .collect { point ->
+                    val isEditable = point == null
                     _liveData.value = liveData.value?.copy(
                         currentMockPoint = point,
                         needInvalidateCenter = false,
-                        needInvalidateZoom = false
+                        needInvalidateZoom = false,
+                        trackCanBeCleared = isEditable,
+                        trackCanBeStarted = isEditable,
+                        trackCanBeStopped = !isEditable
                     )
                 }
         }

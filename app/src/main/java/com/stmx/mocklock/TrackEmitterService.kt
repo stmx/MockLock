@@ -1,4 +1,5 @@
 @file:Suppress("MagicNumber")
+
 package com.stmx.mocklock
 
 import android.app.Notification
@@ -15,13 +16,13 @@ import com.stmx.mocklock.domain.entity.Speed
 import com.stmx.mocklock.domain.entity.TrackConfiguration
 import com.stmx.mocklock.domain.entity.emitter.TrackPositionEmitter
 import com.stmx.mocklock.ui.models.GeoPointUI
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class TrackEmitterService : Service() {
 
@@ -95,9 +96,11 @@ class TrackEmitterService : Service() {
 
         private const val EXTRA_POINT_ARRAY_KEY = "arrayPointsKey"
 
-        fun newIntent(context: Context, points: List<GeoPointUI>): Intent {
+        fun newIntent(context: Context, points: List<GeoPointUI>? = null): Intent {
             return Intent(context, TrackEmitterService::class.java).apply {
-                putExtra(EXTRA_POINT_ARRAY_KEY, points.toTypedArray())
+                if (!points.isNullOrEmpty()) {
+                    putExtra(EXTRA_POINT_ARRAY_KEY, points.toTypedArray())
+                }
             }
         }
 

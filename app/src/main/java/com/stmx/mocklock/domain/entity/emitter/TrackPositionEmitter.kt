@@ -4,10 +4,12 @@ import com.stmx.mocklock.domain.entity.GeoPoint
 import com.stmx.mocklock.domain.entity.TrackConfiguration
 import com.stmx.mocklock.domain.entity.calculator.PositionCalculator
 import com.stmx.mocklock.domain.repository.MockTrackRepository
+import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 interface TrackPositionEmitter {
     fun start(configuration: TrackConfiguration): Flow<Position>
@@ -20,6 +22,9 @@ interface TrackPositionEmitter {
 
         override fun start(configuration: TrackConfiguration): Flow<Position> =
             progressEmitter.start(configuration)
+                .onCompletion {
+                    if (it is CancellationException) mockTrackRepository.setMockLocation(null)
+                }
                 .map { progress ->
                     val point = positionCalculator.calculate(configuration.points, progress)
                     Position(progress, point)

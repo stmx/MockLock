@@ -8,10 +8,12 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 
 class OsmMapWrapper(
     private val map: MapView,
@@ -39,7 +41,10 @@ class OsmMapWrapper(
 
     init {
         map.setTileSource(TileSourceFactory.MAPNIK)
+        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+        map.setMultiTouchControls(true)
         map.overlays.add(mapEventOverlay)
+        map.overlays.add(RotationGestureOverlay(map))
         currentPointMarker.setOnMarkerClickListener { _, _ -> true }
         currentPointMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         polyline.setOnClickListener { _, _, _ -> true }
@@ -84,6 +89,7 @@ class OsmMapWrapper(
         if (map.overlays.contains(this.polyline)) {
             map.overlays.remove(this.polyline)
         }
+        map.invalidate()
     }
 
     override fun setZoom(zoom: Double) {
